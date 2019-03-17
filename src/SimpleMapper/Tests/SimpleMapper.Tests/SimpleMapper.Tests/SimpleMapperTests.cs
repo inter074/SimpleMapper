@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SimpleMapper.Tests.TestModels;
 using SimpleMapperLib.Mapper;
+using SimpleMapperLib.Settings;
 
 namespace SimpleMapper.Tests
 {
@@ -112,6 +109,41 @@ namespace SimpleMapper.Tests
                                                     x.InternalModelArray.Any(i => i.PublicStr == souerce1.InternalModelArray.FirstOrDefault()?.PublicStr)) == 1 &&
                                   result.Any(x => x.ValueOfAllFilledInProperties.Contains(souerce1.PublicStr) && x.ValueOfAllFilledInProperties.Contains(souerce1.PublicStr)) &&
                                   result.Any(x => x.ValueOfAllFilledInProperties.Contains(souerce2.PublicStr) && x.ValueOfAllFilledInProperties.Contains(souerce2.PublicStr)));
+        }
+
+        [TestMethod]
+        public void NativeMappingEachWithSecondaryMapWithSettingsTest()
+        {
+            var sourceArray = new List<object>();
+
+            var souerce1 = new Model1()
+            {
+                PublicOnlyWriteStr = "some text",
+                InternalModel = new Model2() { InternalModelArray = new List<Model3>() { new Model3() { InternalModel = new Model2() { PublicStr = "it's internal" } } } },
+                PublicStr = "source1",
+                PublicInt = 134,
+                InternalModelArray = new List<Model3>() { new Model3() { PublicInt = 12, PublicStr = "from source internal array" } }
+            };
+            souerce1.SetPublicOnlyReadStr("it's only read");
+
+            var souerce2 = new Model3()
+            {
+                InternalModel = new Model2() { InternalModelArray = new List<Model3>() { new Model3() { InternalModel = new Model2() { PublicStr = "it's internal from source2" } } } },
+                PublicStr = "source2",
+                PublicInt = 134,
+            };
+            souerce1.SetPublicOnlyReadStr("it's only read");
+            sourceArray.Add(souerce1);
+            sourceArray.Add(souerce2);
+
+            var result = sourceArray.MapEachTo<Model2>(SecondaryMapping, new MapSettings() { SkipCollections = true, SkipCustomTypes = true}).ToArray();
+
+            Assert.AreEqual(true, result.All(x => x.GetType() == typeof(Model2) && x.PublicOnlyReadStr == null && x.GetPublicOnlyWriteStr() == null) &&
+                                  result.Count(x => x.PublicStr == souerce1.PublicStr) == 1 &&
+                                  result.Count(x => x.PublicStr == souerce2.PublicStr) == 1 &&
+                                  result.Any(x => x.ValueOfAllFilledInProperties.Contains(souerce1.PublicStr) && x.ValueOfAllFilledInProperties.Contains(souerce1.PublicStr)) &&
+                                  result.Any(x => x.ValueOfAllFilledInProperties.Contains(souerce2.PublicStr) && x.ValueOfAllFilledInProperties.Contains(souerce2.PublicStr)) &&
+                                  result.All(x => x.InternalModelArray == null && x.InternalModel == null));
         }
 
         private void SecondaryMapping(Model2 model2)

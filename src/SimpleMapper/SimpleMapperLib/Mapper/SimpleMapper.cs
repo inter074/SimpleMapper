@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using SimpleMapperLib.Extensions;
+using SimpleMapperLib.Settings;
 
 namespace SimpleMapperLib.Mapper
 {
@@ -11,10 +15,11 @@ namespace SimpleMapperLib.Mapper
         /// </summary>
         /// <typeparam name="TDest">Destination object</typeparam>
         /// <param name="source">Source object</param>
+        /// <param name="settings">Mapping settings</param>
         /// <returns></returns>
-        public static TDest MapTo<TDest>(this object source)
+        public static TDest MapTo<TDest>(this object source, MapSettings settings = null)
         {
-            var sourceProperties = source.GetType().GetProperties();
+            var sourceProperties = source.GetType().GetProperties().ApplySettings(settings);
             var instance = (TDest)Activator.CreateInstance(typeof(TDest));
             foreach (var propertyInfo in sourceProperties.Where(x => x.CanRead && !x.GetMethod.IsPrivate))
             {
@@ -32,10 +37,11 @@ namespace SimpleMapperLib.Mapper
         /// <typeparam name="TDest"></typeparam>
         /// <param name="source">Source object</param>
         /// <param name="secondaryMapping">Action of additional mapping conditions</param>
+        /// <param name="settings">Mapping settings</param>
         /// <returns></returns>
-        public static TDest MapTo<TDest>(this object source, Action<TDest> secondaryMapping)
+        public static TDest MapTo<TDest>(this object source, Action<TDest> secondaryMapping, MapSettings settings = null)
         {
-            var destObj = source.MapTo<TDest>();
+            var destObj = source.MapTo<TDest>(settings);
             secondaryMapping(destObj);
             return destObj;
         }
@@ -45,12 +51,13 @@ namespace SimpleMapperLib.Mapper
         /// </summary>
         /// <typeparam name="TDest">Destination object</typeparam>
         /// <param name="sourceArray">Source object array</param>
+        /// <param name="settings">Mapping settings</param>
         /// <returns>Array of destination objects</returns>
-        public static IEnumerable<TDest> MapEachTo<TDest>(this IEnumerable<object> sourceArray)
+        public static IEnumerable<TDest> MapEachTo<TDest>(this IEnumerable<object> sourceArray, MapSettings settings = null)
         {
             var destArray = new List<TDest>();
             foreach (var source in sourceArray)
-                destArray.Add(source.MapTo<TDest>());
+                destArray.Add(source.MapTo<TDest>(settings));
 
             return destArray;
         }
@@ -61,12 +68,13 @@ namespace SimpleMapperLib.Mapper
         /// <typeparam name="TDest">Destination object</typeparam>
         /// <param name="sourceArray">Source object array</param>
         /// <param name="secondaryMapping">Action of additional mapping conditions</param>
+        /// <param name="settings">Mapping settings</param>
         /// <returns>Array of destination objects</returns>
-        public static IEnumerable<TDest> MapEachTo<TDest>(this IEnumerable<object> sourceArray, Action<TDest> secondaryMapping)
+        public static IEnumerable<TDest> MapEachTo<TDest>(this IEnumerable<object> sourceArray, Action<TDest> secondaryMapping, MapSettings settings = null)
         {
             var destArray = new List<TDest>();
             foreach (var source in sourceArray)
-                destArray.Add(source.MapTo(secondaryMapping));
+                destArray.Add(source.MapTo(secondaryMapping, settings));
 
             return destArray;
         }
