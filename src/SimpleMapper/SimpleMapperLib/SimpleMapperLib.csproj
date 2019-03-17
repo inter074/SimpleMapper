@@ -46,7 +46,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Abstractions\" />
-    <Folder Include="Tests\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

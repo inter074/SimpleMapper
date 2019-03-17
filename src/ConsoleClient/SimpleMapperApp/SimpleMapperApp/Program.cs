@@ -15,7 +15,13 @@ namespace SimpleMapperApp
             var source = new SourceObject(3, "T56C8", "test object", new InternalObject(){Name = "internal"});
             //var dest = source.MapTo<DestinationObject>();
             var list = new List<SourceObject>(){source, new SourceObject(2, "second", "second source obj", new InternalObject())};
-            var destList = list.MapEachTo<DestinationObject>();
+            var destList = list.MapEachTo<DestinationObject>(SecondaryMappingForInternalObject);
+        }
+
+        private static void SecondaryMappingForInternalObject(DestinationObject dest)
+        {
+            dest.InternalObject =
+                dest.InternalObject == null ? new InternalObject("internal").SetFullName() : dest.InternalObject.SetFullName();
         }
     }
 }
