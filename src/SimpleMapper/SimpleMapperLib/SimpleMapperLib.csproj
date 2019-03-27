@@ -41,13 +41,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Abstractions\AbstractCustomMapping.cs" />
+    <Compile Include="CustomMap\CustomMap.cs" />
+    <Compile Include="CustomMap\CustomMappingProfiles.cs" />
+    <Compile Include="Exceptions\InitializationException.cs" />
+    <Compile Include="Exceptions\ObjectMappingException.cs" />
     <Compile Include="Extensions\MapperSettingsExtensions.cs" />
     <Compile Include="Mapper\SimpleMapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\MapSettings.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Abstractions\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

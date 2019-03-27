@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using SimpleMapperLib.Abstractions;
+using SimpleMapperLib.CustomMap;
 using SimpleMapperLib.Extensions;
 using SimpleMapperLib.Settings;
 
@@ -78,5 +80,11 @@ namespace SimpleMapperLib.Mapper
 
             return destArray;
         }
+
+        /// <summary>
+        /// Initializing custom object mapping rules
+        /// </summary>
+        /// <param name="customMappings">Custom mapping rules</param>
+        public static void InitializeCustomMappingRules(params AbstractCustomMapping[] customMappings) => CustomMappingProfiles.Initialize(customMappings);
     }
 }

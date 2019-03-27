@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MappingProfile\DestinationObjectProfile.cs" />
     <Compile Include="Objects\DestinationObject.cs" />
     <Compile Include="Objects\InternalObject.cs" />
     <Compile Include="Objects\SourceObject.cs" />
@@ -58,5 +59,6 @@
       <Name>SimpleMapperLib</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

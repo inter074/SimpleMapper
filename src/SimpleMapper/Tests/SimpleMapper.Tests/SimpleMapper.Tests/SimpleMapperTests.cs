@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SimpleMapper.Tests.TestModels;
+using SimpleMapperLib.Abstractions;
 using SimpleMapperLib.Mapper;
 using SimpleMapperLib.Settings;
 
@@ -160,5 +163,24 @@ namespace SimpleMapper.Tests
                     : $"{v.Name} - {v.Value}";
             }
         }
+
+
+        [TestMethod]
+        public void CustomMapTest()
+        {
+            var p = new DestinationObjectTestProfile();
+            SimpleMapperLib.Mapper.SimpleMapper.InitializeCustomMappingRules(p);
+            AbstractCustomMapping.ApplyCustomMap(new Model1() {PublicInt = 1}, new Model2() {PublicInt = 2});
+        }
+    }
+
+    public class DestinationObjectTestProfile : AbstractCustomMapping
+    {
+        public DestinationObjectTestProfile()
+        {
+            CreateRuleForCustomMap<Model1, Model2>()
+                .Map(x => x.PublicStr, x => x.PublicStr);
+        }
+
     }
 }
